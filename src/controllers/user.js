@@ -2,9 +2,11 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const connectDB = require("../config/connectDB");
 
 async function register(req, res) {
 	try {
+        await connectDB()
 		console.log(req.body);
 		const { name, email, password } = req.body;
 		const passwordHashed = await bcrypt.hash(password, 16);
@@ -52,6 +54,7 @@ async function register(req, res) {
 
 async function login(req, res) {
 	try {
+        await connectDB()
 		const { email, password } = req.body;
 
 		const user = await User.findOne({ email });
@@ -130,6 +133,7 @@ async function login(req, res) {
 
 async function logout(req, res) {
 	try {
+        await connectDB()
 		res.clearCookie("token", {
 			httpOnly: true,
 			secure: true,

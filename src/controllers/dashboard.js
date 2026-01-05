@@ -1,3 +1,4 @@
+const connectDB = require("../config/connectDB");
 const Expense = require("../models/expense");
 const Income = require("../models/income");
 const { isValidObjectId, Types } = require("mongoose");
@@ -5,6 +6,7 @@ const xlsx = require("xlsx");
 
 exports.getDashboardData = async (req, res) => {
 	try {
+		await connectDB();
 		const user = req.user;
 		const userObjectId = new Types.ObjectId(String(user?._id));
 		const incomes = await Income.find({ userId: user?._id }).sort({ date: -1 });
@@ -93,6 +95,7 @@ exports.getDashboardData = async (req, res) => {
 
 exports.downloadTransactionExcel = async (req, res) => {
 	try {
+		await connectDB();
 		const user = req.user;
 		const incomes = await Income.find({ userId: user?._id }).sort({ date: -1 });
 		const expenses = await Expense.find({ userId: user?._id }).sort({

@@ -31,7 +31,5 @@ app.use("/api/income", incomeRouter);
 app.use("/api/expense", expenseRouter);
 app.use("/api/dashboard", dashboardRouter);
 
-app.listen(PORT, async () => {
-	await connectDB();
-	console.log(`App is running at port ${PORT}`);
-});
+module.exports = app;
+

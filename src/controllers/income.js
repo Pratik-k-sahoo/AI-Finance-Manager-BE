@@ -1,3 +1,4 @@
+const connectDB = require("../config/connectDB");
 const Income = require("../models/income");
 const User = require("../models/user.model");
 const xlsx = require("xlsx");
@@ -5,6 +6,7 @@ const xlsx = require("xlsx");
 exports.addIncome = async (req, res) => {
 	const user = req.user;
 	try {
+        await connectDB()
 		const { source, amount, date, description } = req.body;
 
 		const income = await Income.create({
@@ -30,6 +32,7 @@ exports.addIncome = async (req, res) => {
 exports.getAllIncome = async (req, res) => {
 	const user = req.user;
 	try {
+        await connectDB()
 		const incomes = await Income.find({
 			userId: user?._id,
 		}).sort({ date: -1 });
@@ -46,6 +49,7 @@ exports.getAllIncome = async (req, res) => {
 
 exports.deleteIncome = async (req, res) => {
 	try {
+        await connectDB()
 		await Income.findByIdAndDelete(req.params.id);
 		res.status(200).json({
 			message: "Income deleted",
@@ -59,6 +63,7 @@ exports.deleteIncome = async (req, res) => {
 
 exports.downloadIncomeExcel = async (req, res) => {
 	try {
+        await connectDB()
 		const user = req.user;
 		const incomes = await Income.find({ userId: user?._id }).sort({ date: -1 });
 		const data = incomes.map((item) => ({

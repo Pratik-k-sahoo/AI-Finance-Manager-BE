@@ -1,3 +1,4 @@
+const connectDB = require("../config/connectDB");
 const Expense = require("../models/expense");
 const User = require("../models/user.model");
 const xlsx = require("xlsx");
@@ -5,6 +6,7 @@ const xlsx = require("xlsx");
 exports.addExpense = async (req, res) => {
 	const user = req.user;
 	try {
+        await connectDB()
 		const { category, amount, date, description } = req.body;
 
 		const expense = await Expense.create({
@@ -30,6 +32,7 @@ exports.addExpense = async (req, res) => {
 exports.getAllExpense = async (req, res) => {
 	const user = req.user;
 	try {
+        await connectDB()
 		const expenses = await Expense.find({
 			userId: user?._id,
 		}).sort({ date: -1 });
@@ -46,6 +49,7 @@ exports.getAllExpense = async (req, res) => {
 
 exports.deleteExpense = async (req, res) => {
 	try {
+        await connectDB()
 		await Expense.findByIdAndDelete(req.params.id);
 		res.status(200).json({
 			message: "Expense deleted",
@@ -59,6 +63,7 @@ exports.deleteExpense = async (req, res) => {
 
 exports.downloadExpenseExcel = async (req, res) => {
 	try {
+        await connectDB()
 		const user = req.user;
 		const expenses = await Expense.find({ userId: user?._id }).sort({
 			date: -1,
