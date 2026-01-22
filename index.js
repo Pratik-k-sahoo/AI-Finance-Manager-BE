@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 app.use(
 	cors({
-		origin: ["https://ai-finance-manager-be-uc3c.vercel.app"],
+		origin: ["https://ai-finance-manager-be-uc3c.vercel.app", 'http://localhost:5173'],
 		credentials: true,
 	})
 );
