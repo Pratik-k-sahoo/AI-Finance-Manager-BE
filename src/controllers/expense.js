@@ -6,7 +6,7 @@ const xlsx = require("xlsx");
 exports.addExpense = async (req, res) => {
 	const user = req.user;
 	try {
-        await connectDB()
+		await connectDB();
 		const { category, amount, date, description } = req.body;
 
 		const expense = await Expense.create({
@@ -32,7 +32,7 @@ exports.addExpense = async (req, res) => {
 exports.getAllExpense = async (req, res) => {
 	const user = req.user;
 	try {
-        await connectDB()
+		await connectDB();
 		const expenses = await Expense.find({
 			userId: user?._id,
 		}).sort({ date: -1 });
@@ -49,7 +49,7 @@ exports.getAllExpense = async (req, res) => {
 
 exports.deleteExpense = async (req, res) => {
 	try {
-        await connectDB()
+		await connectDB();
 		await Expense.findByIdAndDelete(req.params.id);
 		res.status(200).json({
 			message: "Expense deleted",
@@ -61,9 +61,29 @@ exports.deleteExpense = async (req, res) => {
 	}
 };
 
+exports.updateExpense = async (req, res) => {
+	try {
+		await connectDB();
+		const expense = await Expense.findById(req.params.id);
+		const { category, amount, date, description } = req.body;
+		expense.category = category || expense.category;
+		expense.amount = amount || expense.amount;
+		expense.description = description || expense.description;
+		expense.date = new Date(date);
+		await expense.save();
+		res.status(200).json({
+			message: "Expense Updated",
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Server Error",
+		});
+	}
+};
+
 exports.downloadExpenseExcel = async (req, res) => {
 	try {
-        await connectDB()
+		await connectDB();
 		const user = req.user;
 		const expenses = await Expense.find({ userId: user?._id }).sort({
 			date: -1,
@@ -82,11 +102,11 @@ exports.downloadExpenseExcel = async (req, res) => {
 		const buffer = xlsx.write(wb, { type: "buffer", bookType: "xlsx" });
 		res.setHeader(
 			"Content-Disposition",
-			"attachment; filename=transactions.xlsx"
+			"attachment; filename=transactions.xlsx",
 		);
 		res.setHeader(
 			"Content-Type",
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 		);
 
 		return res.status(200).send(buffer);
